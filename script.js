@@ -82,12 +82,16 @@ function investigateEmail(emailText) {
   const senderDomain = getDomain(headers.from);
   const replyDomain = getDomain(headers['reply-to']);
   const returnDomain = getDomain(headers['return-path']);
+  const senderValid = Boolean(headers.from && senderDomain);
   const attachmentCount = (emailText.match(/^content-disposition:\s*attachment/gi) || []).length;
   const authStatus = ['spf', 'dkim', 'dmarc'].map((key) => authResults.match(new RegExp(`${key}\\s*=\\s*(pass|fail|none|neutral)`, 'i'))?.[1]?.toUpperCase() || 'UNKNOWN');
+  const allAuthPassed = authStatus.every((status) => status === 'PASS');
 
   if (authFailure) {
     score += 38;
     findings.push({ level: 'high', text: 'Sender authentication contains SPF, DKIM, or DMARC failures.' });
+  } else if (allAuthPassed) {
+    findings.push({ level: 'normal', text: 'SPF, DKIM, and DMARC authentication checks passed.' });
   } else if (authPass) {
     findings.push({ level: 'normal', text: 'Authentication results report at least one passing sender check.' });
   } else {
@@ -110,9 +114,9 @@ function investigateEmail(emailText) {
     findings.push({ level: 'high', text: 'From and Return-Path domains do not match.' });
   }
   if (!headers.subject) findings.push({ level: 'normal', text: 'No Subject header was detected.' });
-  if (!headers.from) {
-    score += 12;
-    findings.push({ level: 'high', text: 'No From header was detected, so sender identity is incomplete.' });
+  if (!senderValid) {
+    score += 70;
+    findings.push({ level: 'high', text: 'No valid sender address was found. This message is likely fake or malformed.' });
   }
   if (trace.length) findings.push({ level: 'normal', text: `${trace.length} Received header${trace.length === 1 ? '' : 's'} captured for origin tracing.` });
 
@@ -121,7 +125,7 @@ function investigateEmail(emailText) {
   const originCountryData = getOriginEstimate(originIp);
   return {
     score: Math.min(score, 100), findings, authFailure, suspiciousLink, trace,
-    headers, authStatus, urls, attachmentCount, originIp, originCountryData,
+    headers, authStatus, urls, attachmentCount, originIp, originCountryData, senderValid,
   };
 }
 
