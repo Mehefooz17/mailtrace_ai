@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MailTrace AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand-lockup">
+        <div class="brand-mark" aria-hidden="true">M</div>
+        <div>
+          <h1>MailTrace AI</h1>
+          <p>Email Forensics &amp; Intelligence</p>
+        </div>
+      </div>
+      <div class="case-meta">
+        <span>CASE <b>—</b> PENDING</span>
+        <span>SIH 2026 Prototype</span>
+      </div>
+    </header>
+
+    <section class="workspace" aria-labelledby="page-title">
+      <div class="intro">
+        <p class="eyebrow">EMAIL FORENSICS / INTAKE</p>
+        <h2 id="page-title">Upload a suspicious email</h2>
+        <p class="lede">Investigate headers, sender authentication, links and origin infrastructure in one pass.</p>
+      </div>
+
+      <div class="mode-tabs" role="tablist" aria-label="Email input mode">
+        <button class="mode-tab active" role="tab" aria-selected="true" data-mode="file">.EML FILE</button>
+        <button class="mode-tab" role="tab" aria-selected="false" data-mode="raw">PASTE HEADERS / RAW EMAIL</button>
+      </div>
+
+      <div class="input-panel">
+        <input id="file-input" type="file" accept=".eml,message/rfc822" hidden>
+        <button class="dropzone" id="dropzone" type="button" aria-describedby="file-status">
+          <span class="mail-icon" aria-hidden="true">✉</span>
+          <span id="drop-label">Drop a .eml file here, or click to choose one</span>
+          <span class="drop-hint">MAX 10MB / RFC 822 FORMAT</span>
+        </button>
+        <div class="input-status" id="file-status" role="status">No email selected</div>
+        <textarea id="raw-input" class="raw-input" placeholder="Paste complete email headers or raw email content here..." hidden></textarea>
+      </div>
+
+      <button class="sample-link" id="sample-button" type="button">or load a sample phishing email to try it out <span aria-hidden="true">→</span></button>
+      <div class="action-row">
+        <button class="investigate" id="investigate-button" type="button"><span>Investigate</span><span aria-hidden="true">↗</span></button>
+        <button class="clear-button" id="clear-button" type="button">Clear</button>
+      </div>
+
+      <section class="result-panel" id="result-panel" hidden aria-live="polite">
+        <div class="result-heading"><span class="result-dot"></span> ANALYSIS READY</div>
+        <div class="dashboard-grid">
+          <aside class="assessment-card">
+            <div class="card-label">THREAT ASSESSMENT</div>
+            <div class="risk-stamp" id="risk-label">LOW RISK</div>
+            <strong class="assessment-score" id="risk-score">0</strong>
+            <div class="score-caption">/ 100 RISK SCORE</div>
+            <ul class="assessment-findings" id="assessment-findings"></ul>
+          </aside>
+          <div class="dashboard-details">
+            <section class="dashboard-card email-card">
+              <div class="card-label">EMAIL INFORMATION</div>
+              <dl class="email-details">
+                <div><dt>SENDER</dt><dd id="info-sender">Unknown</dd></div>
+                <div><dt>SUBJECT</dt><dd id="info-subject">Unknown</dd></div>
+                <div><dt>DATE</dt><dd id="info-date">Unknown</dd></div>
+                <div><dt>ORIGIN IP</dt><dd id="info-origin-ip">Not listed</dd></div>
+                <div><dt>SPF / DKIM / DMARC</dt><dd id="info-auth">UNKNOWN / UNKNOWN / UNKNOWN</dd></div>
+                <div><dt>LINKS FOUND</dt><dd id="info-links">0</dd></div>
+              </dl>
+            </section>
+            <section class="dashboard-card origin-card">
+              <div class="card-label">DIGITAL ORIGIN</div>
+              <div class="origin-content">
+                <strong id="origin-code">--</strong>
+                <div class="origin-summary">
+                  <h3 id="origin-country">Unavailable</h3>
+                  <div class="confidence-track"><span id="confidence-bar"></span></div>
+                  <p>Confidence: <b id="origin-confidence">0%</b></p>
+                </div>
+              </div>
+              <p class="origin-reason" id="origin-reason">Heuristic fallback: live lookup is unavailable from this browser.</p>
+            </section>
+          </div>
+        </div>
+        <p id="result-message"></p>
+        <ul class="finding-list" id="finding-list"></ul>
+        <section class="trace-section" aria-labelledby="trace-title">
+          <div class="trace-heading"><span id="trace-title">SOURCE TRACE</span><span id="trace-count">0 HOPS</span></div>
+          <ol class="trace-list" id="trace-list"></ol>
+        </section>
+        <p class="analysis-note">Analysis runs in your browser. Link reputation, DNS, and sender identity are not verified against external services.</p>
+      </section>
+    </section>
+
+    <footer>MailTrace AI — prototype built for Smart India Hackathon 2026 <span>·</span> rule-based detection + AI-assisted reporting <span>·</span> not for operational forensic use</footer>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
